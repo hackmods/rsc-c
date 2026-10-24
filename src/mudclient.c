@@ -1,5 +1,5 @@
 #include "mudclient.h"
-#ifdef __emscripten__
+#ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
 
@@ -3360,7 +3360,7 @@ void mudclient_handle_game_input(mudclient *mud) {
 
     /* ARSC cinema: follow window.ARSC_WATCH / parent focused bot when present */
     GameCharacter *arsc_camera_anchor = mud->local_player;
-#if defined(__emscripten__)
+#if defined(__EMSCRIPTEN__)
     {
         char arsc_watch[32];
         arsc_watch[0] = '\0';
