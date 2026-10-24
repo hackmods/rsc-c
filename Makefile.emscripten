@@ -11,7 +11,7 @@ CFLAGS += -std=gnu99 -s USE_SDL=2 -DSDL2
 
 # build both wasm and js
 LDFLAGS += -sWASM=2
-LDFLAGS += -sWEBSOCKET_URL=wss://
+LDFLAGS += -sWEBSOCKET_URL=ws://
 LDFLAGS += -lm -lSDL2
 
 ifeq ($(RENDER_GL), 1)
@@ -59,3 +59,6 @@ clean:
 	rm -f src/*.o src/lib/*.o src/lib/rsa/*.o src/ui/*.o
 	rm -f src/gl/*.o src/gl/textures/*.o src/custom/*.o
 	rm -f mudclient mudclient.*
+
+# ARSC 2003scape proto 204
+CFLAGS += -DNO_RSA -DNO_ISAAC
