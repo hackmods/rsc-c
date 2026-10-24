@@ -1,4 +1,8 @@
 #include "mudclient.h"
+#ifdef __emscripten__
+#include <emscripten.h>
+#endif
+
 
 #ifdef EMSCRIPTEN
 /* clang doesn't know what triple equals is, understandably */
@@ -3354,25 +3358,85 @@ void mudclient_handle_game_input(mudclient *mud) {
         }
     }
 
-    if (mud->camera_auto_rotate_player_x - mud->local_player->current_x <
+    /* ARSC cinema: follow window.ARSC_WATCH / parent focused bot when present */
+    GameCharacter *arsc_camera_anchor = mud->local_player;
+#if defined(__emscripten__)
+    {
+        char arsc_watch[32];
+        arsc_watch[0] = '\0';
+        EM_ASM(
+            {
+                try {
+                    var w = '';
+                    if (typeof window !== 'undefined') {
+                        w = window.ARSC_WATCH || '';
+                        if (!w && window.parent && window.parent !== window) {
+                            try {
+                                w = window.parent.ARSC_WATCH ||
+                                    (window.parent.ARSC_SETTINGS &&
+                                     window.parent.ARSC_SETTINGS.cinemaFollow &&
+                                     window.parent.ARSC_SETTINGS.focusedBot) ||
+                                    '';
+                            } catch (e) {}
+                        }
+                        if (!w && window.ARSC_SETTINGS &&
+                            window.ARSC_SETTINGS.cinemaFollow) {
+                            w = window.ARSC_SETTINGS.focusedBot || '';
+                        }
+                    }
+                    if (w) {
+                        stringToUTF8(String(w).toLowerCase().replace(/\s+/g, ''),
+                                     $0, 32);
+                    }
+                } catch (e) {}
+            },
+            arsc_watch);
+        if (arsc_watch[0]) {
+            for (int pi = 0; pi < mud->player_count; pi++) {
+                GameCharacter *pl = mud->players[pi];
+                if (!pl || !pl->name[0]) {
+                    continue;
+                }
+                char norm[32];
+                int ni = 0;
+                for (int ci = 0; pl->name[ci] && ni < 31; ci++) {
+                    char b = pl->name[ci];
+                    if (b == ' ') {
+                        continue;
+                    }
+                    if (b >= 'A' && b <= 'Z') {
+                        b = (char)(b + 32);
+                    }
+                    norm[ni++] = b;
+                }
+                norm[ni] = '\0';
+                if (strcmp(arsc_watch, norm) == 0) {
+                    arsc_camera_anchor = pl;
+                    break;
+                }
+            }
+        }
+    }
+#endif
+    if (mud->camera_auto_rotate_player_x - arsc_camera_anchor->current_x <
             -500 ||
-        mud->camera_auto_rotate_player_x - mud->local_player->current_x > 500 ||
-        mud->camera_auto_rotate_player_y - mud->local_player->current_y <
+        mud->camera_auto_rotate_player_x - arsc_camera_anchor->current_x > 500 ||
+        mud->camera_auto_rotate_player_y - arsc_camera_anchor->current_y <
             -500 ||
-        mud->camera_auto_rotate_player_y - mud->local_player->current_y > 500) {
-        mud->camera_auto_rotate_player_x = mud->local_player->current_x;
-        mud->camera_auto_rotate_player_y = mud->local_player->current_y;
+        mud->camera_auto_rotate_player_y - arsc_camera_anchor->current_y > 500) {
+        mud->camera_auto_rotate_player_x = arsc_camera_anchor->current_x;
+        mud->camera_auto_rotate_player_y = arsc_camera_anchor->current_y;
     }
 
-    if (mud->camera_auto_rotate_player_x != mud->local_player->current_x) {
+    if (mud->camera_auto_rotate_player_x != arsc_camera_anchor->current_x) {
         mud->camera_auto_rotate_player_x +=
-            (mud->local_player->current_x - mud->camera_auto_rotate_player_x) /
+            (arsc_camera_anchor->current_x - mud->camera_auto_rotate_player_x) /
             (16 + ((mud->camera_zoom - 500) / 15));
     }
 
-    if (mud->camera_auto_rotate_player_y != mud->local_player->current_y) {
+    if (mud->camera_auto_rotate_player_y != arsc_camera_anchor->current_y) {
         mud->camera_auto_rotate_player_y +=
-            (mud->local_player->current_y - mud->camera_auto_rotate_player_y) /
+            (arsc_camera_anchor->current_y - mud->camera_auto_rotate_player_y) /
             (16 + ((mud->camera_zoom - 500) / 15));
     }
 
