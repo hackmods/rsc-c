@@ -260,14 +260,66 @@
                     function () {
                         FS.mkdir('/options');
                         FS.mount(LSFS(), { key: 'rsc' }, '/options');
+                    },
+                    function () {
+                        // ARSC: seed options.ini (optional ?preset=spectate|qol|authentic)
+                        try {
+                            var params = new URLSearchParams(location.search);
+                            var preset = (params.get('preset') || '').toLowerCase();
+                            var allowed = { spectate: 1, qol: 1, authentic: 1 };
+                            var url = allowed[preset]
+                                ? ('/presets/' + preset + '.ini')
+                                : '/options.ini';
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('GET', url, false);
+                            xhr.send(null);
+                            if (xhr.status >= 200 && xhr.status < 300 && xhr.responseText) {
+                                FS.writeFile('/options/options.ini', xhr.responseText);
+                            }
+                        } catch (e) {
+                            console.warn('ARSC options.ini preload failed', e);
+                        }
                     }
                 ],
                 preRun: [
                     function () {
                         ENV.SDL_EMSCRIPTEN_KEYBOARD_ELEMENT = '#canvas';
 
-                        const args = window.location.hash.slice(1).split(',');
+                        let args = window.location.hash.slice(1).split(',').filter(Boolean);
+                        if (args.length < 2) {
+                            args = ['free', location.hostname, '43596'];
+                            history.replaceState(null, '', location.pathname + location.search + '#' + args.join(','));
+                        } else if (args.length < 3) {
+                            args.push('43596');
+                            history.replaceState(null, '', location.pathname + location.search + '#' + args.join(','));
+                        }
                         arguments_.push(...args);
+                        if (typeof Module !== 'undefined') {
+                            Module.websocket = Module.websocket || {};
+                            Module.websocket.subprotocol = 'binary';
+                            try {
+                                var qs = new URLSearchParams(location.search);
+                                var wsp = qs.get('wsPath') || '';
+                                var proto = location.protocol === 'https:' ? 'wss://' : 'ws://';
+                                if (wsp) {
+                                    Module.websocket.url = proto + location.host + wsp;
+                                } else {
+                                    Module.websocket.url = 'ws://';
+                                }
+                            } catch (e) {
+                                Module.websocket.url = 'ws://';
+                            }
+                        }
+                        try {
+                            var wp = new URLSearchParams(location.search).get('watch');
+                            if (wp) window.ARSC_WATCH = wp;
+                            else if (window.parent && window.parent !== window) {
+                                try {
+                                    window.ARSC_WATCH = window.parent.ARSC_WATCH || '';
+                                    window.ARSC_SETTINGS = window.parent.ARSC_SETTINGS;
+                                } catch (e) {}
+                            }
+                        } catch (e) {}
                     }
                 ],
                 postRun: [],
