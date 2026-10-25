@@ -820,9 +820,7 @@ struct mudclient {
 
     /* ./ui/wilderness-warning.c */
     int show_wilderness_warning;
-    int wilderness_warning_shown_at;
-    int welcome_shown_at;
-    int server_message_shown_at;
+    int auto_close_state[3][5];
 
     /* oh dear you are dead */
     int death_screen_timeout;

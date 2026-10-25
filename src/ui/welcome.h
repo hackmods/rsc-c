@@ -2,6 +2,7 @@
 #define _H_WELCOME
 
 #include "../mudclient.h"
+#include "auto-close.h"
 
 #define WELCOME_HEIGHT 65
 

@@ -2,16 +2,8 @@
 
 /* TODO recovery */
 
-/* followed bots never click this box, so it closes itself */
-#define WELCOME_SHOWN_AT_AUTO_CLOSE_MS 10000
-
 void mudclient_draw_welcome(mudclient *mud) {
-    int now = get_ticks();
-
-    if (mud->welcome_shown_at == 0) {
-        mud->welcome_shown_at = now ? now : 1;
-    } else if (now - mud->welcome_shown_at >= WELCOME_SHOWN_AT_AUTO_CLOSE_MS) {
-        mud->welcome_shown_at = 0;
+    if (mudclient_auto_close_expired(mud, AUTO_CLOSE_WELCOME, 20000, NULL)) {
         mud->show_dialog_welcome = 0;
         mud->mouse_button_click = 0;
         return;
@@ -88,10 +80,6 @@ void mudclient_draw_welcome(mudclient *mud) {
              mud->mouse_y > dialog_y + (height / 2))) {
             mud->show_dialog_welcome = 0;
         }
-    }
-
-    if (!mud->show_dialog_welcome) {
-        mud->welcome_shown_at = 0;
     }
 
     mud->mouse_button_click = 0;

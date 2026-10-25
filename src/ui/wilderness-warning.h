@@ -3,6 +3,7 @@
 
 #include "../colours.h"
 #include "../mudclient.h"
+#include "auto-close.h"
 
 #define WILDERNESS_WARNING_HEIGHT 180
 

@@ -2,6 +2,7 @@
 #define _H_SERVER_MESSAGE
 
 #include "../mudclient.h"
+#include "auto-close.h"
 
 void mudclient_draw_server_message(mudclient *mud);
 
