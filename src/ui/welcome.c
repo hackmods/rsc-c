@@ -2,7 +2,21 @@
 
 /* TODO recovery */
 
+/* followed bots never click this box, so it closes itself */
+#define WELCOME_SHOWN_AT_AUTO_CLOSE_MS 10000
+
 void mudclient_draw_welcome(mudclient *mud) {
+    int now = get_ticks();
+
+    if (mud->welcome_shown_at == 0) {
+        mud->welcome_shown_at = now ? now : 1;
+    } else if (now - mud->welcome_shown_at >= WELCOME_SHOWN_AT_AUTO_CLOSE_MS) {
+        mud->welcome_shown_at = 0;
+        mud->show_dialog_welcome = 0;
+        mud->mouse_button_click = 0;
+        return;
+    }
+
     int is_compact = mud->surface->width < 400;
     int width = (is_compact ? MUD_MIN_WIDTH : 400);
     int height = WELCOME_HEIGHT;
@@ -74,6 +88,10 @@ void mudclient_draw_welcome(mudclient *mud) {
              mud->mouse_y > dialog_y + (height / 2))) {
             mud->show_dialog_welcome = 0;
         }
+    }
+
+    if (!mud->show_dialog_welcome) {
+        mud->welcome_shown_at = 0;
     }
 
     mud->mouse_button_click = 0;

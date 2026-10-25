@@ -1,6 +1,20 @@
 #include "server-message.h"
 
+/* followed bots never click this box, so it closes itself */
+#define SERVER_MESSAGE_SHOWN_AT_AUTO_CLOSE_MS 10000
+
 void mudclient_draw_server_message(mudclient *mud) {
+    int now = get_ticks();
+
+    if (mud->server_message_shown_at == 0) {
+        mud->server_message_shown_at = now ? now : 1;
+    } else if (now - mud->server_message_shown_at >= SERVER_MESSAGE_SHOWN_AT_AUTO_CLOSE_MS) {
+        mud->server_message_shown_at = 0;
+        mud->show_dialog_server_message = 0;
+        mud->mouse_button_click = 0;
+        return;
+    }
+
     int is_compact = mud->surface->width < 400;
     int width = (is_compact ? MUD_MIN_WIDTH : 400);
 
@@ -104,6 +118,10 @@ void mudclient_draw_server_message(mudclient *mud) {
                                  mud->mouse_y > dialog_y + (height / 2))))) {
         mud->server_message_page = 0;
         mud->show_dialog_server_message = 0;
+    }
+
+    if (!mud->show_dialog_server_message) {
+        mud->server_message_shown_at = 0;
     }
 
     mud->mouse_button_click = 0;
