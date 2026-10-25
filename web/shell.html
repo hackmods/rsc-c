@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, user-scalable=no" />
         <!--<meta name="viewport" content="user-scalable=no" />-->
-        <link rel="manifest" href="/manifest.json">
+        <link rel="manifest" href="manifest.json">
         <title>Runescape by Andrew Gower</title>
         <style>
             html,
@@ -262,14 +262,15 @@
                         FS.mount(LSFS(), { key: 'rsc' }, '/options');
                     },
                     function () {
-                        // ARSC: seed options.ini (optional ?preset=spectate|qol|authentic)
+                        // ARSC: seed options.ini (optional ?preset=spectate|qol|authentic). Relative URLs: the
+                        // page is also served under a path prefix (/plus/ behind the Classic nginx).
                         try {
                             var params = new URLSearchParams(location.search);
                             var preset = (params.get('preset') || '').toLowerCase();
                             var allowed = { spectate: 1, qol: 1, authentic: 1 };
                             var url = allowed[preset]
-                                ? ('/presets/' + preset + '.ini')
-                                : '/options.ini';
+                                ? ('presets/' + preset + '.ini')
+                                : 'options.ini';
                             var xhr = new XMLHttpRequest();
                             xhr.open('GET', url, false);
                             xhr.send(null);
@@ -287,7 +288,8 @@
 
                         let args = window.location.hash.slice(1).split(',').filter(Boolean);
                         if (args.length < 2) {
-                            args = ['free', location.hostname, '43596'];
+                            // ARSC: the world is always members; a free client draws members-only ground as sea.
+                            args = ['members', location.hostname, '43596'];
                             history.replaceState(null, '', location.pathname + location.search + '#' + args.join(','));
                         } else if (args.length < 3) {
                             args.push('43596');
