@@ -1,6 +1,20 @@
 #include "wilderness-warning.h"
 
+/* followed bots never click the warning, so it closes itself */
+#define WILDERNESS_WARNING_AUTO_CLOSE_MS 5000
+
 void mudclient_draw_wilderness_warning(mudclient *mud) {
+    int now = get_ticks();
+
+    if (mud->wilderness_warning_shown_at == 0) {
+        mud->wilderness_warning_shown_at = now ? now : 1;
+    } else if (now - mud->wilderness_warning_shown_at >=
+               WILDERNESS_WARNING_AUTO_CLOSE_MS) {
+        mud->wilderness_warning_shown_at = 0;
+        mud->show_wilderness_warning = 2;
+        return;
+    }
+
     int is_touch = mudclient_is_touch(mud);
 
     int wilderness_warning_width =
@@ -91,6 +105,10 @@ void mudclient_draw_wilderness_warning(mudclient *mud) {
             mud->mouse_y < dialog_y ||
             mud->mouse_y > dialog_y + WILDERNESS_WARNING_HEIGHT) {
             mud->show_wilderness_warning = 2;
+        }
+
+        if (mud->show_wilderness_warning == 2) {
+            mud->wilderness_warning_shown_at = 0;
         }
 
         mud->mouse_button_click = 0;
