@@ -300,6 +300,15 @@ void game_data_load_data(int8_t *buffer, int is_members, int version) {
         game_data.objects[i].command2 = game_data_get_string();
     }
 
+    /* ARSC wishing fountains (rsc-server wishing-fountains.js): fountains (26)
+     * and wells (2) get "Make a wish" and "Steal coin" */
+    if (game_data.object_count > 26) {
+        game_data.objects[26].command1 = "Make a wish";
+        game_data.objects[26].command2 = "Steal coin";
+        game_data.objects[2].command1 = "Make a wish";
+        game_data.objects[2].command2 = "Steal coin";
+    }
+
     for (i = 0; i < game_data.object_count; i++) {
         char *model_name = game_data_get_string();
 
