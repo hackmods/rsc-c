@@ -187,6 +187,9 @@
 #define BANK_ITEMS_MAX 256
 #define SHOP_ITEMS_MAX 256 // TODO also just make this 40? (SHOP_GRID_MAX)
 #define TRADE_ITEMS_MAX 14
+#define GE_SLOTS_MAX 8
+#define GE_COLLECT_MAX 16
+#define GE_SEARCH_LENGTH 24
 #define DUEL_ITEMS_MAX 8
 
 #define EXPERIENCE_DROPS_MAX 100
@@ -303,6 +306,7 @@ typedef struct mudclient mudclient;
 #include "ui/combat-style.h"
 #include "ui/confirm.h"
 #include "ui/duel.h"
+#include "ui/exchange.h"
 #include "ui/experience-drops.h"
 #include "ui/login.h"
 #include "ui/logout.h"
@@ -998,6 +1002,35 @@ struct mudclient {
     int shop_selected_item_type;
     int shop_buy_price_mod;
     int shop_sell_price_mod;
+
+    /* ./ui/exchange.c (Grand Exchange) */
+    int8_t show_dialog_ge;
+    int ge_flags;
+    int ge_coins;
+    int ge_slot_state[GE_SLOTS_MAX];
+    int ge_slot_item[GE_SLOTS_MAX];
+    int ge_slot_qty[GE_SLOTS_MAX];
+    int ge_slot_filled[GE_SLOTS_MAX];
+    int ge_slot_price[GE_SLOTS_MAX];
+    int ge_collect_count;
+    int ge_collect_item[GE_COLLECT_MAX];
+    int ge_collect_amount[GE_COLLECT_MAX];
+    int ge_mode;
+    int ge_selected_slot;
+    int ge_side;
+    int ge_item_id;
+    int ge_qty;
+    int ge_price;
+    int8_t ge_price_set;
+    int ge_entry_field;
+    int8_t ge_search_enter;
+    char ge_search[GE_SEARCH_LENGTH + 1];
+    int ge_quote_item;
+    int ge_quote_guide;
+    int ge_quote_bid;
+    int ge_quote_ask;
+    int ge_quote_vol24;
+    int ge_quote_limit_left;
 
     /* ./ui/transaction.c */
     int transaction_item_count;

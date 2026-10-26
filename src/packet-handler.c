@@ -1722,6 +1722,20 @@ void mudclient_packet_tick(mudclient *mud) {
         mud->show_dialog_shop = 0;
         break;
     }
+#ifndef REVISION_177
+    case SERVER_EXCHANGE_STATE: {
+        mudclient_exchange_read_state(mud, data, size);
+        break;
+    }
+    case SERVER_EXCHANGE_QUOTE: {
+        mudclient_exchange_read_quote(mud, data, size);
+        break;
+    }
+    case SERVER_EXCHANGE_CLOSE: {
+        mudclient_exchange_close(mud, 0);
+        break;
+    }
+#endif
     case SERVER_TRADE_OPEN:
     case SERVER_DUEL_OPEN: {
         int player_index = get_unsigned_short(data, 1, size);

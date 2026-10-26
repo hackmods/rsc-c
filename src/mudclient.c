@@ -431,6 +431,7 @@ void mudclient_handle_key_press(mudclient *mud, int key_code) {
             mud->show_dialog_social_input == 0 &&
             mud->show_dialog_offer_x == 0 &&
             !(mud->bank_search_focus && mud->show_dialog_bank) &&
+            !mudclient_exchange_wants_text(mud) &&
             /*mud->show_dialog_report_abuse_step == 0 &&*/
             !mud->is_sleeping && mud->panel_message_tabs) {
             int is_option_number = mud->options->option_numbers &&
@@ -512,7 +513,9 @@ void mudclient_key_pressed(mudclient *mud, int code, int char_code) {
     int should_append_pm = (mud->show_dialog_bank ? mud->bank_search_focus : 1);
 
     if (found_text) {
-        if (!mud->show_dialog_offer_x) {
+        if (mudclient_exchange_wants_text(mud)) {
+            mudclient_exchange_type_char(mud, char_code);
+        } else if (!mud->show_dialog_offer_x) {
             size_t current_length = strlen(mud->input_text_current);
 
             if (current_length < INPUT_TEXT_LENGTH) {
@@ -561,13 +564,17 @@ void mudclient_key_pressed(mudclient *mud, int code, int char_code) {
     }
 
     if (code == K_ENTER) {
+        if (mudclient_exchange_wants_text(mud)) {
+            mudclient_exchange_enter(mud);
+        }
+
         strcpy(mud->input_text_final, mud->input_text_current);
 
         if (should_append_pm) {
             strcpy(mud->input_pm_final, mud->input_pm_current);
         }
 
-        if (mud->options->offer_x) {
+        if (mud->options->offer_x || mud->show_dialog_offer_x) {
             char filtered_digits[INPUT_DIGITS_LENGTH + 1] = {0};
             int filtered_length = 0;
             char digits_suffix = '\0';
@@ -602,6 +609,10 @@ void mudclient_key_pressed(mudclient *mud, int code, int char_code) {
             memset(mud->input_digits_current, '\0', INPUT_DIGITS_LENGTH + 1);
         }
     } else if (code == K_BACKSPACE) {
+        if (mudclient_exchange_wants_text(mud)) {
+            mudclient_exchange_backspace(mud);
+        }
+
         size_t current_length = strlen(mud->input_text_current);
 
         if (current_length > 0) {
@@ -614,7 +625,7 @@ void mudclient_key_pressed(mudclient *mud, int code, int char_code) {
             mud->input_pm_current[pm_length - 1] = '\0';
         }
 
-        if (mud->options->offer_x) {
+        if (mud->options->offer_x || mud->show_dialog_offer_x) {
             size_t digits_length = strlen(mud->input_digits_current);
 
             if (digits_length > 0) {
@@ -2017,6 +2028,7 @@ void mudclient_reset_game(mudclient *mud) {
     mud->mouse_button_down = 0;
     mud->show_dialog_shop = 0;
     mud->show_dialog_bank = 0;
+    mud->show_dialog_ge = 0;
     mud->is_sleeping = 0;
     mud->friend_list_count = 0;
 }
@@ -4308,6 +4320,8 @@ void mudclient_draw_ui(mudclient *mud) {
         }
     } else if (mud->show_dialog_shop && mud->combat_timeout == 0) {
         mudclient_draw_shop(mud);
+    } else if (mud->show_dialog_ge && mud->combat_timeout == 0) {
+        mudclient_draw_exchange(mud);
     } else if (mud->show_dialog_trade_confirm) {
         mudclient_draw_trade_confirm(mud);
     } else if (mud->show_dialog_trade) {
