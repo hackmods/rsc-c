@@ -938,7 +938,7 @@ int8_t *mudclient_read_data_file(mudclient *mud, char *file, char *description,
     if (strstr(file, "jagex.jag") != NULL) {
         file_data = (int8_t *)jagex_jag;
     } else if (strstr(file, "config") != NULL) {
-        file_data = (int8_t *)config85_jag;
+        file_data = (int8_t *)config86_jag;
     } else if (strstr(file, "media") != NULL) {
         file_data = (int8_t *)media58_jag;
     } else if (strstr(file, "entity") != NULL && strstr(file, ".mem") == NULL) {

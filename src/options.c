@@ -340,6 +340,10 @@ void options_load(Options *options) {
     /* connection */
     OPTION_INI_INT("members", options->members, 0, 1);
     OPTION_INI_INT("version_config", options->version_config, 0, 256);
+    /* ARSC: an older saved config lacks the treasure trail caskets (1290-1292) */
+    if (options->version_config < VERSION_CONFIG) {
+        options->version_config = VERSION_CONFIG;
+    }
     OPTION_INI_INT("version_maps", options->version_maps, 0, 256);
     OPTION_INI_INT("version_entity", options->version_entity, 0, 256);
     OPTION_INI_INT("version_media", options->version_media, 0, 256);
