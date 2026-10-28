@@ -73,6 +73,7 @@ typedef struct gl_atlas_position {
 #include "gl/textures/entities.h"
 #include "gl/textures/fonts.h"
 #include "gl/textures/media.h"
+#include "gl/textures/items.h"
 
 #define GL_MAX_QUADS 2048
 
@@ -186,6 +187,8 @@ struct Surface {
 
     GLuint gl_sprite_texture;
     GLuint gl_entity_textures[ENTITY_TEXTURE_LENGTH];
+    /* item sprites after the original game's (ARSC): cache/textures/items.png */
+    GLuint gl_item_texture;
 
     uint8_t *gl_dynamic_texture_buffer;
     GLuint gl_dynamic_texture;

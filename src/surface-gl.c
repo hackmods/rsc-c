@@ -82,6 +82,12 @@ void surface_gl_new(Surface *surface, int width, int height, int limit,
                     "./cache/textures/sprites.png");
 #endif
 
+#ifdef __SWITCH__
+    gl_load_texture(&surface->gl_item_texture, "romfs:/textures/items.png");
+#else
+    gl_load_texture(&surface->gl_item_texture, "./cache/textures/items.png");
+#endif
+
     for (int i = 0; i < ENTITY_TEXTURE_LENGTH; i++) {
         char filename[32] = {0};
 #ifdef __SWITCH__
@@ -540,6 +546,19 @@ void surface_gl_buffer_sprite(Surface *surface, int sprite_id, int x, int y,
 
         atlas_position = gl_media_atlas_positions[atlas_index];
         base_atlas_position = gl_media_base_atlas_positions[atlas_index];
+
+#ifdef RENDER_GL
+        /* ARSC: item icons recoloured by build-items.mjs sit on their own page */
+        int item_index = sprite_id - surface->mud->sprite_item;
+
+        if (item_index >= GL_ITEM_VARIANT_FIRST &&
+            item_index < GL_ITEM_VARIANT_FIRST + GL_ITEM_VARIANT_COUNT) {
+            texture = surface->gl_item_texture;
+            atlas_position =
+                gl_item_atlas_positions[item_index - GL_ITEM_VARIANT_FIRST];
+            base_atlas_position = gl_transparent_atlas_position;
+        }
+#endif
     } else if (sprite_id == surface->mud->sprite_texture + 1) {
 #ifdef RENDER_GL
         base_texture = surface->gl_dynamic_texture;

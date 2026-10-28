@@ -162,7 +162,7 @@ mediaSprites.trim = true;
 
 await mediaSprites.init();
 //mediaSprites.loadArchive(await fs.readFile(`${cacheDirectory}/media58.jag`));
-mediaSprites.loadArchive(await fs.readFile(`${cacheDirectory}/media59.jag`));
+mediaSprites.loadArchive(await fs.readFile(`${cacheDirectory}/media60.jag`));
 
 const fonts = new Fonts(Fonts.FONTS);
 await fonts.init();
