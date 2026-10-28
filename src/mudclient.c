@@ -940,7 +940,7 @@ int8_t *mudclient_read_data_file(mudclient *mud, char *file, char *description,
     } else if (strstr(file, "config") != NULL) {
         file_data = (int8_t *)config87_jag;
     } else if (strstr(file, "media") != NULL) {
-        file_data = (int8_t *)media58_jag;
+        file_data = (int8_t *)media60_jag;
     } else if (strstr(file, "entity") != NULL && strstr(file, ".mem") == NULL) {
         file_data = (int8_t *)entity24_jag;
     } else if (strstr(file, "entity") != NULL && strstr(file, ".mem") != NULL) {
