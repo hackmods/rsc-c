@@ -20,7 +20,7 @@
 #include <wiikeyboard/keyboard.h>
 #include <wiiuse/wpad.h>
 
-#include "config86_jag.h"
+#include "config87_jag.h"
 #include "entity24_jag.h"
 #include "entity24_mem.h"
 #include "filter2_jag.h"
@@ -30,7 +30,7 @@
 #include "maps63_jag.h"
 #include "maps63_mem.h"
 #include "media58_jag.h"
-#include "models36_jag.h"
+#include "models37_jag.h"
 #include "sounds1_mem.h"
 #include "textures17_jag.h"
 

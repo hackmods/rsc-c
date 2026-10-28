@@ -348,6 +348,10 @@ void options_load(Options *options) {
     OPTION_INI_INT("version_entity", options->version_entity, 0, 256);
     OPTION_INI_INT("version_media", options->version_media, 0, 256);
     OPTION_INI_INT("version_models", options->version_models, 0, 256);
+    /* ARSC: an older saved models archive lacks the per-stall market models */
+    if (options->version_models < VERSION_MODELS) {
+        options->version_models = VERSION_MODELS;
+    }
     OPTION_INI_INT("version_textures", options->version_textures, 0, 256);
     OPTION_INI_INT("version_sounds", options->version_sounds, 0, 256);
     OPTION_INI_INT("fatigue", options->fatigue, 0, 1);
