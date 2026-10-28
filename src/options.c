@@ -347,6 +347,10 @@ void options_load(Options *options) {
     OPTION_INI_INT("version_maps", options->version_maps, 0, 256);
     OPTION_INI_INT("version_entity", options->version_entity, 0, 256);
     OPTION_INI_INT("version_media", options->version_media, 0, 256);
+    /* ARSC: an older saved media archive lacks the recoloured item icons (logs, herbs, certificates...) */
+    if (options->version_media < VERSION_MEDIA) {
+        options->version_media = VERSION_MEDIA;
+    }
     OPTION_INI_INT("version_models", options->version_models, 0, 256);
     /* ARSC: an older saved models archive lacks the per-stall market models */
     if (options->version_models < VERSION_MODELS) {
