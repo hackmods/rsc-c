@@ -153,7 +153,7 @@ const texturesDirectory = process.argv[4] || './';
 
 const config = new Config();
 await config.init();
-config.loadArchive(await fs.readFile(`${cacheDirectory}/config87.jag`));
+config.loadArchive(await fs.readFile(`${cacheDirectory}/config88.jag`));
 
 const mediaSprites = new MediaSprites(config);
 

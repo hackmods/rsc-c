@@ -938,7 +938,7 @@ int8_t *mudclient_read_data_file(mudclient *mud, char *file, char *description,
     if (strstr(file, "jagex.jag") != NULL) {
         file_data = (int8_t *)jagex_jag;
     } else if (strstr(file, "config") != NULL) {
-        file_data = (int8_t *)config87_jag;
+        file_data = (int8_t *)config88_jag;
     } else if (strstr(file, "media") != NULL) {
         file_data = (int8_t *)media60_jag;
     } else if (strstr(file, "entity") != NULL && strstr(file, ".mem") == NULL) {
@@ -956,7 +956,7 @@ int8_t *mudclient_read_data_file(mudclient *mud, char *file, char *description,
     } else if (strstr(file, "land") != NULL && strstr(file, ".mem") != NULL) {
         file_data = (int8_t *)land63_mem;
     } else if (strstr(file, "models") != NULL) {
-        file_data = (int8_t *)models37_jag;
+        file_data = (int8_t *)models38_jag;
     } else if (strstr(file, "sounds") != NULL) {
         file_data = (int8_t *)sounds1_mem;
     }
