@@ -1,7 +1,7 @@
 #ifndef _H_VERSION
 #define _H_VERSION
 
-#define VERSION_CONFIG 88
+#define VERSION_CONFIG 89
 #define VERSION_ENTITY 24
 #define VERSION_FILTER 2
 #define VERSION_MAPS 63
